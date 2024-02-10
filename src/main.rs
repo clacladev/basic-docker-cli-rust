@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use std::{fs, os::unix::fs::chroot, path::Path, process::Stdio};
+use std::{fs, os::unix, path::Path, process::Stdio};
 use tempfile::TempDir;
 
 // Usage: your_docker.sh run <image> <command> <arg1> <arg2> ...
@@ -11,7 +11,7 @@ fn main() -> Result<()> {
     // println!("Args: {:?}", args);
     // Args: ["/tmp/codecrafters-docker-target/release/docker-starter-rust", "run", "ubuntu:latest", "/usr/local/bin/docker-explorer", "ls", "src"]
 
-    setup_new_sandbox(command)?;
+    setup_new_sandbox()?;
 
     let output = std::process::Command::new(command)
         .args(command_args)
@@ -37,7 +37,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn setup_new_sandbox(_command: &str) -> anyhow::Result<()> {
+fn setup_new_sandbox() -> anyhow::Result<()> {
     let temp_dir = TempDir::new()?;
 
     // Crate the sandbox directory
@@ -50,7 +50,7 @@ fn setup_new_sandbox(_command: &str) -> anyhow::Result<()> {
     fs::copy(source_path, &dest_path)?;
 
     // Chroot into the sandbox
-    chroot(temp_dir.path())?;
+    unix::fs::chroot(temp_dir.path())?;
     std::env::set_current_dir("/")?;
 
     Ok(())
