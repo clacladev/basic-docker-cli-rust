@@ -1,6 +1,6 @@
 # Basic Docker CLI in Rust
 
-This is a basic Docke CLI implementation in Rust. This is a small learning and research project.
+This is a basic Docker CLI implementation in Rust. This is a small learning and research project.
 
 ## How to run
 
